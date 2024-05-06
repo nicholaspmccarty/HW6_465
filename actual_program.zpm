@@ -1,0 +1,18 @@
+s = "*" ;
+N = 3 ;
+result = 1 ;
+FOR N s += s ; result *= 2 ; PRINT s ; ENDFOR
+msg = "2 to power of 3 is" ;
+PRINT msg ;
+PRINT result ;
+
+result = 8 ;
+result *= -1 ;
+result += result ;
+result *= -1 ;
+result -= result ;
+PRINT result ;
+PRINT s ;
+
+
+num *= s ;

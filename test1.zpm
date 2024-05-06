@@ -1,0 +1,23 @@
+A1 = 12 ;
+PRINT A1 ;
+A223 = A1 ;
+B = 90000 ;
+NUMBER = B ;
+PRINT A223 ;
+PRINT NUMBER ;
+PRINT B ;
+
+NUMBER = -34 ;
+PRINT NUMBER ;
+B = 0 ;
+PRINT B ;
+
+number = -120 ;
+PRINT number ;
+number = NUMBER ;
+PRINT number ;
+
+a9 = 10 ;
+n = -30 ;
+PRINT a9 ;
+PRINT n ;

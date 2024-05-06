@@ -1,0 +1,68 @@
+result of: test1.zpm 
+A=12
+A223=12
+NUMBER=900000
+B=900000
+NUMBER=-34
+B=0
+number=-120
+number=-34
+a9=10
+n=-30
+
+result of: test2.zpm 
+A1="teSt"
+str="teSt2"
+sTr2="test 3"
+sTr3="test 44 test 55 test 66"
+A1="test 3"
+A1="Hello Wolrd!"
+str="test 44 test 55 test 66"
+
+result of: test3.zpm
+str="test"
+sTr2="hello WORLD"
+num=100
+sTr2=200
+num2=200
+num="hello WORLD"
+
+result of: test4.zpm
+num=110
+num=100
+num=-1000
+num=0
+str="Hello world!"
+str="Hello world!Hello world!"
+
+result of: test5.zpm
+A=20
+A=22
+str="ABABABAB"
+A=22
+str="--"
+A=22
+str="--"
+A=22
+str="--"
+
+result of: test6.zpm
+RUNTIME ERROR: line 10
+
+result of: grad.zpm
+str="aA----A----A----"
+A=10
+str="->Aa----Aa----"
+str="**"
+str="****"
+str="*******"
+
+result of: actual_program.zpm
+s="**"
+s="****"
+s="********"
+msg="2 to power of 3 is"
+result=8
+result=0
+s="********"
+RUNTIME ERROR: line 18

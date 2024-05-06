@@ -1,0 +1,12 @@
+num = 10 ;
+
+B = "hello" ;
+
+B += B ;
+
+num += num ;
+
+
+B += num ;
+PRINT B ;
+

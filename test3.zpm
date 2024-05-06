@@ -1,0 +1,15 @@
+
+
+num = 100 ;
+str = "test" ;
+sTr2 = "hello WORLD" ;
+PRINT str ;
+PRINT sTr2 ;
+PRINT num ;
+
+num = sTr2 ;
+num2 = 200 ;
+sTr2 = num2 ;
+PRINT sTr2 ;
+PRINT num2 ;
+PRINT num ;

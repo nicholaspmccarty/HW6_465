@@ -1,0 +1,14 @@
+A = 0 ;
+num = 1 ;
+FOR 6 A += 1 ; ENDFOR
+FOR 1 A -= 1 ; ENDFOR
+FOR 2 A *= 2 ; ENDFOR
+FOR num PRINT A ; ENDFOR
+
+num = 2 ;
+str = "AB" ;
+FOR num str += str ; A += 1 ; ENDFOR
+PRINT A ;
+PRINT str ;
+
+FOR 3 A = 11 ; str = "-" ; A += 2 ; A -= 2 ; A *= 2 ; str += "-" ; PRINT A ; PRINT str ; ENDFOR

@@ -1,0 +1,17 @@
+A1 = "teSt" ;
+str = "teSt2" ;
+sTr2 = "test 3" ;
+sTr3 = "test 44 test 55 test 66" ;
+PRINT A1 ;
+PRINT str ;
+PRINT sTr2 ;
+PRINT sTr3 ;
+
+
+A1 = sTr2 ;
+PRINT A1 ;
+A1 = "Hello Wolrd!" ;
+PRINT A1 ;
+str = sTr3 ;
+PRINT str ;
+
