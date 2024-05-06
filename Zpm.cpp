@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     // Calling helper method
     
     parseAndExecute(argv[1]);
-    printData();
+    // printData();
 }
 
    
@@ -59,8 +59,11 @@ void parseAndExecute(const std::string& filename) {
             size_t pos = line.find(' '); // Find the first space to isolate the command
             std::string command = line.substr(0, pos);
 
+            std::string argument = line.substr(pos + 1);
+            trim(argument); 
+
             if (command == "PRINT") {
-             handlePrint(line.substr(pos + 1)); // Pass the rest of the line to handlePrint
+             handlePrint(argument); // Pass the rest of the line to handlePrint
             } else {
                 handleAssignment(line, lineNumber);
             }
@@ -72,7 +75,15 @@ void parseAndExecute(const std::string& filename) {
 
 // Method for handling our print functionality.
 void handlePrint(const std::string& variable) {
-    std::cout << variable << " : dummy value" << std::endl;
+    
+    // Check if the variable exists in the map
+    if (variables.find(variable) != variables.end()) {
+        // If found, print the variable and its value
+        std::cout << variable << "=" << variables[variable] << std::endl;
+    } else {
+        // If not found, print that the variable is undefined
+        std::cerr << "Error: Variable '" << variable << "' is not defined." << std::endl;
+    }
 }
 
 
@@ -97,29 +108,39 @@ void handleAssignment(std::string& line, int lineNumber) {
         return;
     }
     
-    // Assign the value to the variable in the map
-    variables[variableName] = value;
 
-    std::cout << "Assigned " << variableName << " = " << value << " at line " << lineNumber << std::endl;
+    if (variables.find(value) != variables.end()) {
+        // If value is a variable name, assign the value from the map
+        variables[variableName] = variables[value];
+    } else {
+        // Otherwise, just assign the literal value
+        variables[variableName] = value;
+    }
+
+    // std::cout << "Assigned " << variableName << " = " << value << " at line " << lineNumber << std::endl;
 }
 
 
 
 // ChatGPT function for assisting readability. 
 void trim(std::string& str) {
-        auto left = std::find_if(str.begin(), str.end(), [](char ch) {
-            return !std::isspace(ch);
-        });
-        auto right = std::find_if(str.rbegin(), str.rend(), [](char ch) {
-            return !std::isspace(ch);
-        }).base();
-        if (left < right) {
-            str = std::string(left, right);
-        } else {
-            str.clear(); // The string is all whitespace
-        }
-    }
+    // Remove leading whitespaces
+    auto left = std::find_if(str.begin(), str.end(), [](char ch) {
+        return !std::isspace(ch);
+    });
 
+    // Remove trailing whitespaces and semicolons
+    auto right = std::find_if(str.rbegin(), str.rend(), [](char ch) {
+        return !std::isspace(ch) && ch != ';';
+    }).base();
+
+    // Check if the valid string range is determined correctly
+    if (left < right) {
+        str = std::string(left, right);
+    } else {
+        str.clear(); // The string is all whitespace or semicolons
+    }
+}
 
 // Simple debugging method.
 void printData() {
