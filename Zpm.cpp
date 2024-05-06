@@ -1,7 +1,3 @@
-// Nicholas McCarty
-// CSE 465
-// Z++ Interpreter
-
 #include <iostream>
 #include <map>
 #include <string>
@@ -9,6 +5,8 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <vector>
+#include <iterator>
 
 
 // Declaring methods / variables for guaranteed method locality.
@@ -17,6 +15,7 @@ void handlePrint(const std::string& variable);
 void handleAssignment(std::string& line, int lineNumber);
 void trim(std::string& str);
 void printData();
+void handleForLoop(std::string line);
  std::map<std::string, std::string> variables;
 
 
@@ -65,7 +64,10 @@ void parseAndExecute(const std::string& filename) {
 
             if (command == "PRINT") {
              handlePrint(argument); // Pass the rest of the line to handlePrint
-            } else {
+            } else if (command == "FOR" ) {
+                handleForLoop(line);
+            } 
+            else {
                 handleAssignment(line, lineNumber);
             }
         }
@@ -182,4 +184,27 @@ void printData() {
     for (const auto& var : variables) {
         std::cout << var.first << " = " << var.second << std::endl;
     }
+}
+
+void handleForLoop(std::string line) {
+    // Find the position of "FOR" and "ENDFOR"
+    size_t posFor = line.find("FOR");
+    size_t posEndFor = line.find("ENDFOR");
+    std::string loopParams = line.substr(posFor + 3, posEndFor - posFor - 3);
+    trim(loopParams);
+    
+    
+    std::istringstream iss(loopParams);
+    int number;
+    iss >> number;
+
+    size_t pos = loopParams.find_first_of(" ");
+    loopParams.erase(0, pos);
+    
+    
+    for (size_t jack = 0; jack < number; jack++) {
+        handleAssignment(loopParams, 1);
+    }
+
+
 }
