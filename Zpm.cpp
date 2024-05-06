@@ -8,11 +8,15 @@
 #include <stdexcept>
 #include <fstream>
 #include <sstream>
-#include <algorithm>>
+#include <algorithm>
 
+
+// Declaring methods / variables for guaranteed method locality.
 void parseAndExecute(const std::string& filename);
 void handlePrint(const std::string& variable);
-void handleAssignment(const std::string& line, int lineNumber);
+void handleAssignment(std::string& line, int lineNumber);
+void trim(std::string& str);
+void printData();
  std::map<std::string, std::string> variables;
 
 
@@ -27,16 +31,13 @@ int main(int argc, char* argv[]) {
     }
 
     // Calling helper method
-    try {
-        parseAndExecute(argv[1]);
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return 1;
-    }
+    
+    parseAndExecute(argv[1]);
+    printData();
 }
 
    
-
+// Main parse and execute function for parsing the file.
 void parseAndExecute(const std::string& filename) {
     std::ifstream file(filename);
         if (!file.is_open()) {
@@ -44,8 +45,6 @@ void parseAndExecute(const std::string& filename) {
         } else {
             std::cout << "File opened sucessfully" << std::endl;
         }
-
-       
 
         std::string line;
         int lineNumber = 0;
@@ -61,9 +60,9 @@ void parseAndExecute(const std::string& filename) {
             std::string command = line.substr(0, pos);
 
             if (command == "PRINT") {
-                /// handlePrint(line.substr(pos + 1)); // Pass the rest of the line to handlePrint
+             handlePrint(line.substr(pos + 1)); // Pass the rest of the line to handlePrint
             } else {
-                /// handleAssignment(line, lineNumber);
+                handleAssignment(line, lineNumber);
             }
         }
 
@@ -71,13 +70,40 @@ void parseAndExecute(const std::string& filename) {
     }
 
 
+// Method for handling our print functionality.
 void handlePrint(const std::string& variable) {
-
+    std::cout << variable << " : dummy value" << std::endl;
 }
 
-void handleAssignment(const std::string& line, int lineNumber) {
-   
+
+// Method for handling assignment. 
+// Method for handling assignment.
+void handleAssignment(std::string& line, int lineNumber) {
+    trim(line); // Remove any leading or trailing whitespace
+    size_t equalPos = line.find('=');
+    if (equalPos == std::string::npos) {
+        std::cerr << "Syntax error in line " << lineNumber << ": '=' not found." << std::endl;
+        return;
+    }
+
+    std::string variableName = line.substr(0, equalPos);
+    trim(variableName); // Clean up the variable name
+
+    std::string value = line.substr(equalPos + 1);
+    trim(value); // Clean up the value string
+
+    if (value.empty()) {
+        std::cerr << "Syntax error in line " << lineNumber << ": No value provided for variable." << std::endl;
+        return;
+    }
+    
+    // Assign the value to the variable in the map
+    variables[variableName] = value;
+
+    std::cout << "Assigned " << variableName << " = " << value << " at line " << lineNumber << std::endl;
 }
+
+
 
 // ChatGPT function for assisting readability. 
 void trim(std::string& str) {
@@ -93,3 +119,12 @@ void trim(std::string& str) {
             str.clear(); // The string is all whitespace
         }
     }
+
+
+// Simple debugging method.
+void printData() {
+    std::cout << "Print Data Loaded" << std::endl;
+    for (const auto& var : variables) {
+        std::cout << var.first << " = " << var.second << std::endl;
+    }
+}
