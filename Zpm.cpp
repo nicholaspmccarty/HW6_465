@@ -43,7 +43,8 @@ void parseAndExecute(const std::string& filename) {
         if (!file.is_open()) {
             throw std::runtime_error("Could not open file: " + filename);
         } else {
-            std::cout << "File opened sucessfully" << std::endl;
+            std:: cout << "LOADING FILE : " << filename <<  std::endl;
+            
         }
 
         std::string line;
@@ -89,36 +90,69 @@ void handlePrint(const std::string& variable) {
 
 // Method for handling assignment. 
 // Method for handling assignment.
+// Improved version of handleAssignment to support +=, -=, *= operators.
 void handleAssignment(std::string& line, int lineNumber) {
     trim(line); // Remove any leading or trailing whitespace
-    size_t equalPos = line.find('=');
-    if (equalPos == std::string::npos) {
+    std::string operators[] = {"+=", "-=", "*=", "="};
+    std::string operatorUsed;
+    size_t opPos = std::string::npos;
+
+    // Check for operators +=, -=, *= before standard assignment
+    for (const auto& op : operators) {
+        size_t foundPos = line.find(op);
+        if (foundPos != std::string::npos) {
+            operatorUsed = op;
+            opPos = foundPos;
+            break;
+        }
+    }
+
+    if (opPos == std::string::npos) {
         std::cerr << "Syntax error in line " << lineNumber << ": '=' not found." << std::endl;
         return;
     }
 
-    std::string variableName = line.substr(0, equalPos);
+    std::string variableName = line.substr(0, opPos);
     trim(variableName); // Clean up the variable name
 
-    std::string value = line.substr(equalPos + 1);
+    std::string value = line.substr(opPos + operatorUsed.length());
     trim(value); // Clean up the value string
 
     if (value.empty()) {
         std::cerr << "Syntax error in line " << lineNumber << ": No value provided for variable." << std::endl;
         return;
     }
+
+    // Check if the value is another variable
+    std::string resolvedValue = variables.find(value) != variables.end() ? variables[value] : value;
     
-
-    if (variables.find(value) != variables.end()) {
-        // If value is a variable name, assign the value from the map
-        variables[variableName] = variables[value];
-    } else {
-        // Otherwise, just assign the literal value
-        variables[variableName] = value;
+    // Below was taken from ChatGPT
+    try {
+        if (operatorUsed == "+=") {
+            if (variables[variableName].front() == '"') {  
+                variables[variableName] = variables[variableName].substr(0, variables[variableName].length() - 1) + resolvedValue.substr(1);
+            } else {  // Numeric operation
+                int original = std::stoi(variables[variableName]);
+                int addValue = std::stoi(resolvedValue);
+                variables[variableName] = std::to_string(original + addValue);
+            }
+        } else if (operatorUsed == "-=") {
+            int original = std::stoi(variables[variableName]);
+            int subValue = std::stoi(resolvedValue);
+            variables[variableName] = std::to_string(original - subValue);
+        } else if (operatorUsed == "*=") {
+            int original = std::stoi(variables[variableName]);
+            int mulValue = std::stoi(resolvedValue);
+            variables[variableName] = std::to_string(original * mulValue);
+        } else {  
+            variables[variableName] = resolvedValue;
+        }
+    } catch (std::exception& e) {
+        std::cerr << "Error in operation: " << e.what() << std::endl;
     }
-
-    // std::cout << "Assigned " << variableName << " = " << value << " at line " << lineNumber << std::endl;
 }
+
+
 
 
 
