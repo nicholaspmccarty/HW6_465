@@ -16,6 +16,8 @@ void handleAssignment(std::string& line, int lineNumber);
 void trim(std::string& str);
 void printData();
 void handleForLoop(std::string line);
+void doNTimes(std::string line, int n);
+std::vector<std::string> getVector(const std::string& jack);
  std::map<std::string, std::string> variables;
 
 
@@ -200,11 +202,36 @@ void handleForLoop(std::string line) {
 
     size_t pos = loopParams.find_first_of(" ");
     loopParams.erase(0, pos);
+    std::cout << loopParams << std::endl;
+    std::vector<std::string> expressions = getVector(loopParams);
+    for (auto j : expressions) {
+        doNTimes(j, number);
+    }
     
-    
-    for (size_t jack = 0; jack < number; jack++) {
-        handleAssignment(loopParams, 1);
+
+
+}
+
+void doNTimes(std::string line, int n) {
+    for (size_t jack = 0; jack < n; jack++) {
+        handleAssignment(line, 1);
+    }
+}
+
+std::vector<std::string> getVector(const std::string& jack) {
+    std::vector<std::string> result;
+    std::istringstream iss(jack);
+    std::string temp;
+
+    while (std::getline(iss, temp, ';')) {
+        // Trim leading and trailing whitespace
+        size_t start = temp.find_first_not_of(" \t");
+        size_t end = temp.find_last_not_of(" \t");
+
+        if (start != std::string::npos) {
+            result.push_back(temp.substr(start, end - start + 1));
+        }
     }
 
-
+    return result;
 }
