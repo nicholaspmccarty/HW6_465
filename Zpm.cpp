@@ -93,8 +93,6 @@ void handlePrint(const std::string& variable) {
 
 
 // Method for handling assignment. 
-// Method for handling assignment.
-// Improved version of handleAssignment to support +=, -=, *= operators.
 void handleAssignment(std::string& line, int lineNumber) {
     trim(line); // Remove any leading or trailing whitespace
     std::string operators[] = {"+=", "-=", "*=", "="};
@@ -152,7 +150,7 @@ void handleAssignment(std::string& line, int lineNumber) {
             variables[variableName] = resolvedValue;
         }
     } catch (std::exception& e) {
-        std::cerr << "Error in operation: " << e.what() << std::endl;
+        // std::cerr << "Error in operation: " << e.what() << std::endl;
     }
 }
 
@@ -200,23 +198,39 @@ void handleForLoop(std::string line) {
     int number;
     iss >> number;
 
+    // extract first number, if it's not a number and it's a variable,
+    // we retrieve it
+    // the two prints below were intended for debugging
+    if (iss.fail()) {
+        // Clear the error state
+        iss.clear();
+        // Rewind to the start of the string
+        iss.seekg(0, std::ios::beg);
+
+        std::string variableName;
+        iss >> variableName;  // Extract the variable name
+        // std::cout << "Variable Name: " << variableName << std::endl;
+        number = std::stoi(variables[variableName]);
+    } else {
+        // std::cout << "Number: " << number << std::endl;
+    }
+    
+
     size_t pos = loopParams.find_first_of(" ");
     loopParams.erase(0, pos);
     // std::cout << loopParams << std::endl;
     std::vector<std::string> expressions = getVector(loopParams);
-    for (auto j : expressions) {
-        if (j.find("PRINT") == 0) {
-                std::string varName = j.substr(6); // Assuming "PRINT " is 6 chars
+    for (int i = 0; i < number; i++) {
+        for (auto& expr : expressions) {
+            if (expr.find("PRINT") == 0) {
+                std::string varName = expr.substr(6); // Assuming "PRINT " is 6 chars
                 trim(varName);
                 handlePrint(varName);
+            } else {
+                handleAssignment(expr, 1); 
+            }
         }
-        else {
-            doNTimes(j, number);
     }
-    
-
-
-}
 }
 
 void doNTimes(std::string line, int n) {
