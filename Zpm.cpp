@@ -202,14 +202,21 @@ void handleForLoop(std::string line) {
 
     size_t pos = loopParams.find_first_of(" ");
     loopParams.erase(0, pos);
-    std::cout << loopParams << std::endl;
+    // std::cout << loopParams << std::endl;
     std::vector<std::string> expressions = getVector(loopParams);
     for (auto j : expressions) {
-        doNTimes(j, number);
+        if (j.find("PRINT") == 0) {
+                std::string varName = j.substr(6); // Assuming "PRINT " is 6 chars
+                trim(varName);
+                handlePrint(varName);
+        }
+        else {
+            doNTimes(j, number);
     }
     
 
 
+}
 }
 
 void doNTimes(std::string line, int n) {
