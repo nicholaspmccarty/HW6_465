@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <vector>
 #include <iterator>
+#include <chrono>
 
 
 // Declaring methods / variables for guaranteed method locality.
@@ -33,12 +34,18 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Calling helper method
-    
+    auto start = std::chrono::high_resolution_clock::now(); 
+    // Calling parsing method.
     parseAndExecute(argv[1]);
-    // printData();
-}
+    
+    
 
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+
+    std::cout << "Execution time: " << duration.count() << " milliseconds" << std::endl;
+
+}
    
 // Main parse and execute function for parsing the file.
 void parseAndExecute(const std::string& filename) {
