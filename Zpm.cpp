@@ -8,6 +8,9 @@
 #include <vector>
 #include <iterator>
 #include <chrono>
+// *****************************//
+// IM COMPETING FOR BONUS POINTS //
+// *******************************//
 
 
 // Declaring methods / variables for guaranteed method locality.
