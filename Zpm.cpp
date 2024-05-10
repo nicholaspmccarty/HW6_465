@@ -1,3 +1,9 @@
+// Nicholas McCarty
+// CSE 465
+// Meisam Amjad
+// ZPM Interpreter in C++
+// Thanks for an awesome year!
+
 #include <iostream>
 #include <map>
 #include <string>
