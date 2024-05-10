@@ -8,6 +8,7 @@
 #include <vector>
 #include <iterator>
 #include <chrono>
+#include <memory>
 // *****************************//
 // IM COMPETING FOR BONUS POINTS //
 // *******************************//
@@ -24,7 +25,7 @@ void doNTimes(std::string line, int n);
 void doClock(int n);
 
 std::vector<std::string> getVector(const std::string& jack);
- std::map<std::string, std::string> variables;
+ std::map<std::string, std::unique_ptr<std::string>> variables;
 
 
 /* Main runner function. 
@@ -99,13 +100,9 @@ void parseAndExecute(const std::string& filename) {
 
 // Method for handling our print functionality.
 void handlePrint(const std::string& variable) {
-    
-    // Check if the variable exists in the map
     if (variables.find(variable) != variables.end()) {
-        // If found, print the variable and its value
-        std::cout << variable << "=" << variables[variable] << std::endl;
+        std::cout << variable << " = " << *variables[variable] << std::endl;
     } else {
-        // If not found, print that the variable is undefined
         std::cerr << "Error: Variable '" << variable << "' is not defined." << std::endl;
     }
 }
@@ -144,35 +141,41 @@ void handleAssignment(std::string& line, int lineNumber) {
         return;
     }
 
-    // Check if the value is another variable
-    std::string resolvedValue = variables.find(value) != variables.end() ? variables[value] : value;
+    // Determine the resolved value
+    std::string resolvedValue = variables.find(value) != variables.end() ? *variables[value] : value;
     
-    // Below was taken from ChatGPT
-    try {
-        if (operatorUsed == "+=") {
-            if (variables[variableName].front() == '"') {  
-                variables[variableName] = variables[variableName].substr(0, variables[variableName].length() - 1) + resolvedValue.substr(1);
-            } else {  // Numeric operation
-                int original = std::stoi(variables[variableName]);
-                int addValue = std::stoi(resolvedValue);
-                variables[variableName] = std::to_string(original + addValue);
-            }
-        } else if (operatorUsed == "-=") {
-            int original = std::stoi(variables[variableName]);
-            int subValue = std::stoi(resolvedValue);
-            variables[variableName] = std::to_string(original - subValue);
-        } else if (operatorUsed == "*=") {
-            int original = std::stoi(variables[variableName]);
-            int mulValue = std::stoi(resolvedValue);
-            variables[variableName] = std::to_string(original * mulValue);
-        } else {  
-            variables[variableName] = resolvedValue;
+    // Handling assignment based on the operator
+    if (operatorUsed == "=") {
+        variables[variableName] = std::make_unique<std::string>(resolvedValue);
+    } else {
+        // Ensure variable exists before performing operations
+        if (variables.find(variableName) == variables.end()) {
+            //std::cerr << "Error: Variable '" << variableName << "' not defined." << std::endl;
+            return;
         }
-    } catch (std::exception& e) {
-        // std::cerr << "Error in operation: " << e.what() << std::endl;
+        try {
+            if (operatorUsed == "+=") {
+                if (variables[variableName]->front() == '"') {  // Assuming string concatenation
+                    *variables[variableName] = variables[variableName]->substr(0, variables[variableName]->length() - 1) + resolvedValue.substr(1);
+                } else {  // Numeric operation
+                    int original = std::stoi(*variables[variableName]);
+                    int addValue = std::stoi(resolvedValue);
+                    *variables[variableName] = std::to_string(original + addValue);
+                }
+            } else if (operatorUsed == "-=") {
+                int original = std::stoi(*variables[variableName]);
+                int subValue = std::stoi(resolvedValue);
+                *variables[variableName] = std::to_string(original - subValue);
+            } else if (operatorUsed == "*=") {
+                int original = std::stoi(*variables[variableName]);
+                int mulValue = std::stoi(resolvedValue);
+                *variables[variableName] = std::to_string(original * mulValue);
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Error processing arithmetic operation: " << e.what() << std::endl;
+        }
     }
 }
-
 
 
 
@@ -201,7 +204,7 @@ void trim(std::string& str) {
 void printData() {
     std::cout << "Print Data Loaded" << std::endl;
     for (const auto& var : variables) {
-        std::cout << var.first << " = " << var.second << std::endl;
+        std::cout << var.first << " = " << *var.second << std::endl;
     }
 }
 
@@ -229,7 +232,7 @@ void handleForLoop(std::string line) {
         std::string variableName;
         iss >> variableName;  // Extract the variable name
         // std::cout << "Variable Name: " << variableName << std::endl;
-        number = std::stoi(variables[variableName]);
+        number = std::stoi(*variables[variableName]);
     } else {
         // std::cout << "Number: " << number << std::endl;
     }
